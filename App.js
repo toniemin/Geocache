@@ -8,19 +8,22 @@ export default class Geocache extends Component {
     this.state = {text: ''};
   }
   
+  /*
+   * Returns the question and answer pair.
+   * This function should connect to the database to fetch the qa-pair.
+   */
   getQuizPair() {
-    let juttu = ["Question 1", "Answer 1"];
-    return juttu;
+    return ["Question 1", "Answer 1"];
   }
   
   render() {
     // Get question and answer strings.
-    let quiz = getQuizPair();
+    var quiz = this.getQuizPair();
     
     return(
       <View>
         <Text>
-          Moi
+         {quiz[0]}
         </Text>
         <TextInput
           placeholder="Type your answer here!" 
@@ -28,7 +31,14 @@ export default class Geocache extends Component {
         />
         <Button
           onPress={() => {
-            Alert.alert("Correct!");
+             // Check if user input was correct.
+             // Correct answer can redirect user to some sort of 'success screen'.
+            if (this.state.text === quiz[1]) {
+              Alert.alert("Correct!");
+            }
+            else {
+               Alert.alert("Wrong!");
+            }
           }} 
           title="Submit"
         />
