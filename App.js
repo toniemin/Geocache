@@ -60,14 +60,13 @@ export default class Geocache extends Component {
    */
   getCache(room_id) {
     // Get the caches for this room from the server.
-    var caches = JSON.parse({"UTAPinniBLobby":{"Q1":{"Question":"PinniB question sample #1","Hints":["Hint 1", "Hint 2", "Hint 3"],"Answer":"PinniB answer #1"}, "Q2": {"Question":"Question sample #2","Hints":["Hint 1", "Hint 2", "Hint3"],"Answer":"PinniB answer #2"}},"UTAMainLobby": {"Q1": {"Question":"MainB question sample #1","Hints:":["Hint 1", "Hint 2", "Hint 3"],"Answer":"MainB answer #1"}
-      }
-    })[room_id];
+    var caches = JSON.parse('{"UTAPinniBLobby":{"Q1":{"Question":"PinniB question sample #1","Hints":["Hint 1", "Hint 2", "Hint 3"],"Answer":"PinniB answer #1"}, "Q2": {"Question":"Question sample #2","Hints":["Hint 1", "Hint 2", "Hint3"],"Answer":"PinniB answer #2"}},"UTAMainLobby": {"Q1": {"Question":"MainB question sample #1","Hints:":["Hint 1", "Hint 2", "Hint 3"],"Answer":"MainB answer #1"}}}')[room_id];
     
     // Get a random cache.
-    var i = Math.floor( Math.random() * (caches.keys.length + 1) );
+    var i = Math.floor( Math.random() * (Object.keys(caches).length) ) + 1;
     
-    return caches["Q"+i];
+    var key = "Q"+i;
+    return caches[key];
   }
   
   // TODO: send score to server. 
@@ -80,7 +79,7 @@ export default class Geocache extends Component {
     // "Scan QR-code." Not really tho.
     var code = this.getCode();
     // Get cache data.
-    var cache = this.getCache(code);
+    var cache = this.getCache(code)
     
     // TODO: start a timer.
     
@@ -111,8 +110,7 @@ export default class Geocache extends Component {
           }} 
           title="Submit"
         />
-        <Text>Time elapsed: 404</Text> {/*TODO: timer output here.*/}
-          {/*TODO: "Give hint -button here.*/}
+        <Text>Time elapsed</Text> 
       </View>
       );
     
