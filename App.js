@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Button, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
 // TODO: make a timer component
@@ -12,13 +12,28 @@ class Timer extends Component {
     };
   }
   
+  render() {
+     <Text>Time elapsed: {mins}:{secs}</Text>
+  }
   
 }
+
+const geoStyles = StyleSheet.create({
+   text: {
+      flex: 1,
+      backgroundColor: 'blue'
+   }
+   button: {
+      align: center;
+   }
+});
 
 export default class Geocache extends Component {
   constructor(props) {
     super(props);
-    this.state = {text: ''};
+    this.state = {
+       text: ''
+    };
   }
   
   /* Hard coded JSON data.
@@ -82,6 +97,9 @@ export default class Geocache extends Component {
     // Get cache data.
     var cache = this.getCache(code);
     
+    var fails = 0;
+    var hintsUsed = 0;
+    
     // TODO: start a timer.
     
     return(
@@ -94,6 +112,7 @@ export default class Geocache extends Component {
           onChangeText={(text) => this.setState({text})}
         />
         <Button
+          style={geoStyles.button}
           onPress={() => {
              // Check if user input was correct.
             if (this.state.text === cache["Answer"]) {
@@ -111,7 +130,7 @@ export default class Geocache extends Component {
           }} 
           title="Submit"
         />
-        <Text>Time elapsed: 404</Text> {/*TODO: timer output here.*/}
+        <Timer/> {/*TODO: timer output here.*/}
           {/*TODO: "Give hint -button here.*/}
       </View>
       );
