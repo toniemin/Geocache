@@ -22,9 +22,9 @@ const geoStyles = StyleSheet.create({
    text: {
       flex: 1,
       backgroundColor: 'blue'
-   }
+   },
    button: {
-      align: center;
+      align: center
    }
 });
 
@@ -32,8 +32,18 @@ export default class Geocache extends Component {
   constructor(props) {
     super(props);
     this.state = {
-       text: ''
+       text: '',
+       fails: 0,
+       hintsUsed: 0
     };
+    
+    // Scan the QR-code (not really tho)
+    // and fetch cache data using it.
+    this.cache = this.getCache(this.getCode());
+    
+    
+    // TODO: start a timer.
+    
   }
   
   /* Hard coded JSON data.
@@ -91,20 +101,10 @@ export default class Geocache extends Component {
   }
   
   render() {
-    // "Scan QR-code." Not really tho.
-    var code = this.getCode();
-    // Get cache data.
-    var cache = this.getCache(code)
-    
-    var fails = 0;
-    var hintsUsed = 0;
-    
-    // TODO: start a timer.
-    
     return(
       <View>
         <Text>
-         {cache["Question"]}
+         {this.cache["Question"]}
         </Text>
         <TextInput
           placeholder="Type your answer here!" 
