@@ -10,10 +10,50 @@ class Timer extends Component {
       secs: 0,
       mins: 0
     };
+
+    this.start = new Date();
+    this.interval;
+  }
+
+  componentDidMount() {
+    this.start = new Date();
+    this.interval = setInterval(this.tick, 1000);
+  }
+
+  tick() {
+    var millis = new Date().getMilliseconds();// - this.start.getMilliseconds();
+
+    this.setState({
+      secs: ((millis % 60000) / 1000)//.toFixed(0)
+    });
+
+    this.setState({
+      mins: Math.floor(millis / 60000)
+    });
+
+
+/*
+    this.setState(
+      {
+      secs: ((millis % 60000) / 1000),//.toFixed(0),
+      mins: Math.floor(millis / 60000)
+    });*/
+    //this.state.mins = Math.floor(millis / 60000);
+    //this.state.secs = ((millis % 60000) / 1000).toFixed(0);
+    
+    //this.render();
+  }
+
+  componentWillUnmount() {
+    this.clearInterval(this.interval);
   }
   
   render() {
-     <Text>Time elapsed: {mins}:{secs}</Text>
+     return(
+      <Text>
+        Time elapsed: {this.state.mins}:{this.state.secs}
+      </Text>
+      );
   }
   
 }
@@ -24,7 +64,6 @@ const geoStyles = StyleSheet.create({
       backgroundColor: 'blue'
    },
    button: {
-      align: center
    }
 });
 
@@ -45,32 +84,6 @@ export default class Geocache extends Component {
     // TODO: start a timer.
     
   }
-  
-  /* Hard coded JSON data.
-   * This should be stored in the server!
-   */
-  /*var databaseData = 
-  {
-    "UTAPinniBLobby": {
-      "Q1": {
-        "Question":"PinniB question sample #1",
-        "Hints":["Hint 1", "Hint 2", "Hint 3"],
-        "Answer":"PinniB answer #1"
-      }, 
-      "Q2": {
-        "Question":"Question sample #2",
-        "Hints":["Hint 1", "Hint 2", "Hint3"],
-        "Answer":"PinniB answer #2"
-      }
-    },
-    "UTAMainLobby": {
-      "Q1": {
-        "Question":"MainB question sample #1",
-        "Hints:":["Hint 1", "Hint 2", "Hint 3"],
-        "Answer":"MainB answer #1"
-      }
-    }
-  }*/
   
   /* Mock function for QR-code input.
    * The return value in this is given by the main app.
@@ -129,7 +142,7 @@ export default class Geocache extends Component {
           }} 
           title="Submit"
         />
-        <Text>Time elapsed</Text> 
+        <Timer/>
       </View>
       );
     
