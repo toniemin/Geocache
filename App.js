@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Button, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
 // TODO: make a timer component
@@ -10,42 +10,80 @@ class Timer extends Component {
       secs: 0,
       mins: 0
     };
+
+    this.start = new Date();
+    this.interval;
+  }
+
+  componentDidMount() {
+    this.start = new Date();
+    this.interval = setInterval(this.tick, 1000);
+  }
+
+  tick() {
+    var millis = new Date().getMilliseconds();// - this.start.getMilliseconds();
+
+    this.setState({
+      secs: ((millis % 60000) / 1000)//.toFixed(0)
+    });
+
+    this.setState({
+      mins: Math.floor(millis / 60000)
+    });
+
+
+/*
+    this.setState(
+      {
+      secs: ((millis % 60000) / 1000),//.toFixed(0),
+      mins: Math.floor(millis / 60000)
+    });*/
+    //this.state.mins = Math.floor(millis / 60000);
+    //this.state.secs = ((millis % 60000) / 1000).toFixed(0);
+    
+    //this.render();
+  }
+
+  componentWillUnmount() {
+    this.clearInterval(this.interval);
   }
   
+  render() {
+     return(
+      <Text>
+        Time elapsed: {this.state.mins}:{this.state.secs}
+      </Text>
+      );
+  }
   
 }
+
+const geoStyles = StyleSheet.create({
+   text: {
+      flex: 1,
+      backgroundColor: 'blue'
+   },
+   button: {
+   }
+});
 
 export default class Geocache extends Component {
   constructor(props) {
     super(props);
-    this.state = {text: ''};
+    this.state = {
+       text: '',
+       fails: 0,
+       hintsUsed: 0
+    };
+    
+    // Scan the QR-code (not really tho)
+    // and fetch cache data using it.
+    this.cache = this.getCache(this.getCode());
+    
+    
+    // TODO: start a timer.
+    
   }
-  
-  /* Hard coded JSON data.
-   * This should be stored in the server!
-   */
-  /*var databaseData = 
-  {
-    "UTAPinniBLobby": {
-      "Q1": {
-        "Question":"PinniB question sample #1",
-        "Hints":["Hint 1", "Hint 2", "Hint 3"],
-        "Answer":"PinniB answer #1"
-      }, 
-      "Q2": {
-        "Question":"Question sample #2",
-        "Hints":["Hint 1", "Hint 2", "Hint3"],
-        "Answer":"PinniB answer #2"
-      }
-    },
-    "UTAMainLobby": {
-      "Q1": {
-        "Question":"MainB question sample #1",
-        "Hints:":["Hint 1", "Hint 2", "Hint 3"],
-        "Answer":"MainB answer #1"
-      }
-    }
-  }*/
   
   /* Mock function for QR-code input.
    * The return value in this is given by the main app.
@@ -76,23 +114,17 @@ export default class Geocache extends Component {
   }
   
   render() {
-    // "Scan QR-code." Not really tho.
-    var code = this.getCode();
-    // Get cache data.
-    var cache = this.getCache(code)
-    
-    // TODO: start a timer.
-    
     return(
       <View>
         <Text>
-         {cache["Question"]}
+         {this.cache["Question"]}
         </Text>
         <TextInput
           placeholder="Type your answer here!" 
           onChangeText={(text) => this.setState({text})}
         />
         <Button
+          style={geoStyles.button}
           onPress={() => {
              // Check if user input was correct.
             if (this.state.text === cache["Answer"]) {
@@ -110,7 +142,7 @@ export default class Geocache extends Component {
           }} 
           title="Submit"
         />
-        <Text>Time elapsed</Text> 
+        <Timer/>
       </View>
       );
     
