@@ -8,40 +8,27 @@ class Timer extends Component {
     super(props);
     this.state = {
       secs: 0,
-      mins: 0
+      mins: 0,
     };
-
-    this.start = new Date();
-    this.interval;
   }
 
   componentDidMount() {
-    this.start = new Date();
-    this.interval = setInterval(this.tick, 1000);
-  }
+    this.start = new Date().getTime();
+    this.interval = setInterval( () => 
+    {
+      var distanceSecs = ( (new Date() ).getTime() - this.start ) / 1000;
+      var minutes = Math.floor( distanceSecs / 60 );
+      var seconds = Math.floor( distanceSecs - (minutes * 60) );
+      
+      this.setState({
+          mins: minutes,
+          secs: seconds
+      });
 
-  tick() {
-    var millis = new Date().getMilliseconds();// - this.start.getMilliseconds();
+      console.log((distanceSecs));
+    }, 1000);
 
-    this.setState({
-      secs: ((millis % 60000) / 1000)//.toFixed(0)
-    });
-
-    this.setState({
-      mins: Math.floor(millis / 60000)
-    });
-
-
-/*
-    this.setState(
-      {
-      secs: ((millis % 60000) / 1000),//.toFixed(0),
-      mins: Math.floor(millis / 60000)
-    });*/
-    //this.state.mins = Math.floor(millis / 60000);
-    //this.state.secs = ((millis % 60000) / 1000).toFixed(0);
     
-    //this.render();
   }
 
   componentWillUnmount() {
@@ -51,7 +38,9 @@ class Timer extends Component {
   render() {
      return(
       <Text>
-        Time elapsed: {this.state.mins}:{this.state.secs}
+        Time elapsed: 
+        {this.state.mins}:
+        {(this.state.secs < 10) ? ("0" + this.state.secs) : this.state.secs }
       </Text>
       );
   }
