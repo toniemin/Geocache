@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
-// TODO: make a timer component
+/*
+ * A simple timer component that displays time elapsed since component mounting.
+ * Time is displayed in "min:secs" format.
+ */
 class Timer extends Component {
   constructor(props) {
     super(props);
@@ -47,6 +50,9 @@ class Timer extends Component {
   
 }
 
+/*
+ * Styles for the Geocache component
+ */
 const geoStyles = StyleSheet.create({
    text: {
       flex: 1,
@@ -56,6 +62,9 @@ const geoStyles = StyleSheet.create({
    }
 });
 
+/*
+ * Main component of this app.
+ */
 export default class Geocache extends Component {
   constructor(props) {
     super(props);
@@ -65,13 +74,11 @@ export default class Geocache extends Component {
        hintsUsed: 0
     };
     
-    // Scan the QR-code (not really tho)
-    // and fetch cache data using it.
+    // This is where QR-code data should be used. Fetch cache data form JSON.
     this.cache = this.getCache(this.getCode());
     
-    
-    // TODO: start a timer.
-    
+    // Save the starting time of the game (used in scoring).
+    this.startTime = new Date().getTime();
   }
   
   /* Mock function for QR-code input.
@@ -99,7 +106,7 @@ export default class Geocache extends Component {
   // TODO: send score to server. 
   // Uses time (time), fails (int) and hintsUsed (int) for calculation.
   sendScore(time, fails, hintsUsed) {
-    
+    Alert.alert("Correct! Time elapsed: " + time + "ms, wrong answers: " + fails + ", hints used: " + hintsUsed);
   }
   
   render() {
@@ -117,15 +124,23 @@ export default class Geocache extends Component {
           onPress={() => {
              // Check if user input was correct.
             if (this.state.text === cache["Answer"]) {
-              Alert.alert("Correct!");
-              // TODO: redirect user to some sort of 'success screen'.
-              // TODO: stop timer
-              // TODO: send score
+              // Calculate time elapsed.
+              var timeElapsed = (new Date().getTime()) - this.startTime; 
+              // Get fails-count.
+              var fails = this.state.fails;
+
+              // Get amount of hints used.
+              var hints = this.state.hintsUsed;
+
+              // Send score to server.
+              this.sendScore(timeElapsed, fails, hints);
             }
             else {
                Alert.alert("Wrong!");
-               // TODO: track wrong answers (fails)
-               // TODO: return to text input.
+               // Track fails.
+               this.setState(previousState => (
+                 {fails: fails + 1}
+               ));
             }
             
           }} 

@@ -1,0 +1,21 @@
+{
+    "UTAPinniBLobby": {
+      "Q1": {
+        "Question":"PinniB question sample #1",
+        "Hints":["Hint 1", "Hint 2", "Hint 3"],
+        "Answer":"PinniB answer #1"
+      }, 
+      "Q2": {
+        "Question":"Question sample #2",
+        "Hints":["Hint 1", "Hint 2", "Hint3"],
+        "Answer":"PinniB answer #2"
+      }
+    },
+    "UTAMainLobby": {
+      "Q1": {
+        "Question":"MainB question sample #1",
+        "Hints:":["Hint 1", "Hint 2", "Hint 3"],
+        "Answer":"MainB answer #1"
+      }
+    }
+  }
