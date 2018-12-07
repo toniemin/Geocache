@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
 /*
@@ -30,7 +30,7 @@ class Timer extends Component {
   }
 
   componentWillUnmount() {
-    this.clearInterval(this.interval);
+    clearInterval(this.interval);
   }
 
   render() {
@@ -62,22 +62,29 @@ const geoStyles = StyleSheet.create({
     flex: 1
   },
   contents: {
-    flex: 8,
-    justifyContent: 'space-around'
+    flex: 3,
+    justifyContent: 'flex-start'
   },
   header: {
     alignItems: 'stretch',
     backgroundColor: tuniColor,
     justifyContent: 'flex-end',
-    flex: 1
+    flex: 1/5
   },
   widget: {
     borderWidth: 1,
     borderColor: 'black',
     backgroundColor: tuniColor,
     justifyContent: 'center',
-    flex: 1/5,
-    marginHorizontal: 40
+    flex: 1 / 6,
+    marginHorizontal: 40,
+    marginVertical: 20
+  },
+  timer: {
+    backgroundColor: tuniColor,
+    height: 20,
+    marginHorizontal: 40,
+    marginVertical: 20
   },
   text: {
     color: 'white',
@@ -85,6 +92,9 @@ const geoStyles = StyleSheet.create({
   },
   headerText: {
     fontSize: 28
+  },
+  footer: {
+    flex: 1
   }
 });
 
@@ -97,14 +107,14 @@ export default class Geocache extends Component {
     this.state = {
       text: '',
       fails: 0,
-      hintsUsed: 0
+      hintsUsed: 0,
+      done: false
     };
-
     // This is where QR-code data should be used. Fetch cache data form JSON.
     this.cache = this.getCache(this.getCode());
-
     // Save the starting time of the game (used in scoring).
     this.startTime = new Date().getTime();
+
   }
 
   /* Mock function for QR-code input.
@@ -136,6 +146,39 @@ export default class Geocache extends Component {
   }
 
   render() {
+    if (this.state.done) {
+      // Calculate time elapsed.
+      var timeElapsedSecs = ((new Date().getTime()) - this.startTime) / 1000;
+      var minutes = Math.floor(timeElapsedSecs / 60);
+      var seconds = Math.floor(timeElapsedSecs - (minutes * 60));
+      // Get fails-count.
+      var fails = this.state.fails;
+      // Get amount of hints used.
+      var hints = this.state.hintsUsed;
+
+      return (
+        <View style={geoStyles.container}>
+          <View style={geoStyles.header}>
+            <Text style={[geoStyles.text, geoStyles.headerText]}>
+              Geocache
+            </Text>
+          </View>
+          <View style={geoStyles.contents}>
+
+            <View style={geoStyles.widget}>
+              <Text style={geoStyles.text}>
+                Correct answer!{'\n'}
+                Total time used: {minutes}:{(seconds < 10) ? ("0" + seconds) : seconds}{'\n'}
+                Wrong answers: {fails}{'\n'}
+                Hints used: {hints}
+              </Text>
+            </View>
+
+          </View>
+        </View>
+      );
+    }
+
     return (
       <View style={geoStyles.container}>
         <View style={geoStyles.header}>
@@ -144,19 +187,20 @@ export default class Geocache extends Component {
             </Text>
         </View>
         <View style={geoStyles.contents}>
-
+          <View style={geoStyles.timer}>
+            <Timer style={geoStyles.text} />
+          </View>
           <View style={geoStyles.widget}>
-            <View></View>
             <Text style={geoStyles.text}>
               {this.cache["Question"]}
             </Text>
-            <View></View>
           </View>
           <View style={geoStyles.widget}>
             <TextInput
               placeholder="Type your answer here!"
               onChangeText={(text) => this.setState({ text })}
               style={geoStyles.text}
+              autoFocus={true}
             />
             <View style={geoStyles.buttonContainer}>
               <Button
@@ -165,16 +209,9 @@ export default class Geocache extends Component {
                 onPress={() => {
                   // Check if user input was correct.
                   if (this.state.text === this.cache["Answer"]) {
-                    // Calculate time elapsed.
-                    var timeElapsed = (new Date().getTime()) - this.startTime;
-                    // Get fails-count.
-                    var fails = this.state.fails;
-
-                    // Get amount of hints used.
-                    var hints = this.state.hintsUsed;
-
-                    // Send score to server.
-                    this.sendScore(timeElapsed, fails, hints);
+                    this.setState(
+                      {done: true}
+                    );
                   }
                   else {
                     Alert.alert("Wrong!");
@@ -183,17 +220,13 @@ export default class Geocache extends Component {
                       { fails: fails + 1 }
                     ));
                   }
-
                 }}
                 title="Submit"
               />
             </View>
           </View>
-          <View style={geoStyles.widget}>
-            <Timer style={geoStyles.text} />
-          </View>
-
         </View>
+        <View style={geoStyles.footer}></View>
       </View>
     );
 
